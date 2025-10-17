@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #total-sales {
+            font-size: 2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sales Data Summary</h1>
+    <div id="total-sales">Loading...</div>
+
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('data.csv');
+                const csvText = await response.text();
+                const lines = csvText.split('\n');
+                let total = 0;
+                for (let i = 1; i < lines.length; i++) { // Skip the header
+                    const line = lines[i].trim();
+                    if (line) {  // Make sure line is not empty
+                        const parts = line.split(',');
+                        if (parts.length === 2) {
+                            const sales = parseFloat(parts[1]);
+                            if (!isNaN(sales)) {
+                                total += sales;
+                            }
+                        }
+                    }
+                }
+
+                document.getElementById('total-sales').textContent = 'Total Sales: $' + total.toFixed(2);
+            } catch (error) {
+                document.getElementById('total-sales').textContent = 'Error loading data.';
+                console.error('Error fetching or processing data:', error);
+            }
+        }
+
+        fetchData();
+    </script>
+</body>
+</html>
